@@ -1,11 +1,6 @@
 import Image from "next/image";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
-
-interface TwoColumnBlockProps {
-  leftTitle: string;
-  leftDescription: any;
-  rightImage: any;
-}
+import type { TwoColumnBlockProps } from "@/types/types";
 
 export default function TwoColumnBlock({
   leftTitle,

@@ -1,8 +1,10 @@
 import { draftMode } from "next/headers";
 import {
   GlobalSettingsSkeleton,
+  PageSkeleton,
 } from "@/types/types";
 import { getClient } from "./client";
+import type { Entry } from "contentful";
 
 async function getContentfulClient() {
   const isPreview = await draftMode();
@@ -23,9 +25,9 @@ export async function getGlobalSettings() {
   return response.items[0];
 }
 
-export async function getPageBySlug(slug: string) {
+export async function getPageBySlug(slug: string): Promise<Entry<PageSkeleton> | undefined> {
   const client = await getContentfulClient();
-  const response = await client.getEntries({
+  const response = await client.getEntries<PageSkeleton>({
     content_type: "page",
     "fields.slug": slug,
     include: 10,

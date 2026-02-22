@@ -13,7 +13,7 @@ export default async function HomePage() {
 
   return (
     <main>
-      <BlockRenderer blocks={page.fields.blocks} />
+      <BlockRenderer blocks={page.fields.blocks as any} />
     </main>
   );
 }

@@ -17,7 +17,7 @@ export default async function RootLayout({
   const siteName = global.fields.siteName;
   const logo = global.fields.logo;
   const navigation = global.fields.navigation;
-  const footerContent = global.fields.footerText;
+  const footerText = global.fields.footerText;
 
   return (
     <html lang="en">
@@ -25,7 +25,7 @@ export default async function RootLayout({
         {isEnabled && <PreviewBanner />}
         <Header siteName={siteName} logo={logo} navigation={navigation} />
           {children}
-        <Footer footerContent={footerContent} />
+        <Footer footerText={footerText} />
       </body>
     </html>
   );

@@ -57,9 +57,11 @@ export default async function Page({ params }: PageProps) {
     notFound();
   }
 
+  const blocks = Array.isArray(page.fields.blocks) ? page.fields.blocks : null;
+
   return (
     <main>
-      <BlockRenderer blocks={page.fields.blocks} />
+      <BlockRenderer blocks={blocks} />
     </main>
   );
 }

@@ -1,4 +1,18 @@
 import type { Entry, EntrySkeletonType } from "contentful";
+import type { Document } from "@contentful/rich-text-types";
+
+/**
+ * Contentful Asset
+ */
+export interface ContentfulAsset {
+  fields: {
+    file: {
+      url: string;
+    };
+    title?: string;
+    description?: string;
+  };
+}
 
 /**
  * Navigation Item
@@ -18,7 +32,7 @@ export interface GlobalSettingsSkeleton extends EntrySkeletonType {
   contentTypeId: "globalSettings";
   fields: {
     siteName: string;
-    logo?: any;
+    logo?: ContentfulAsset;
     navigation: Entry<NavigationItemSkeleton>[];
     footerText: string;
   };
@@ -27,6 +41,18 @@ export interface GlobalSettingsSkeleton extends EntrySkeletonType {
 /**
  * Page
  */
+export interface Block {
+  sys: {
+    id: string;
+    contentType: {
+      sys: {
+        id: string;
+      };
+    };
+  };
+  fields: Record<string, unknown>;
+}
+
 export interface PageSkeleton extends EntrySkeletonType {
   contentTypeId: "page";
   fields: {
@@ -34,7 +60,7 @@ export interface PageSkeleton extends EntrySkeletonType {
     slug: string;
     seoTitle?: string;
     seoDescription?: string;
-    blocks: any[];
+    blocks: Block[];
   };
 }
 
@@ -49,21 +75,29 @@ export interface PageFields {
   slug: string;
   seoTitle?: string;
   seoDescription?: string;
-  blocks: Entry<any>[];
+  blocks: Block[];
+}
+
+export interface NavigationItem {
+  sys: { id: string };
+  fields: {
+    label: string;
+    link: string;
+  };
 }
 
 export interface HeaderProps {
   siteName: string;
-  logo?: any;
-  navigation: any[];
+  logo?: ContentfulAsset;
+  navigation: NavigationItem[];
 }
 
 export interface FooterProps {
-  footerContent: any;
+  footerText: Document;
 }
 
 export interface RichTextBlockProps {
-  content: any;
+  content: Document;
 }
 
 export interface ColumnItem {
@@ -71,7 +105,7 @@ export interface ColumnItem {
   fields: {
     title: string;
     description: string;
-    icon?: any;
+    icon?: ContentfulAsset;
   };
 }
 
@@ -85,5 +119,15 @@ export interface HeroBlockProps {
   subheading?: string;
   ctaText?: string;
   ctaLink?: string;
-  backgroundImage?: any; 
+  backgroundImage?: ContentfulAsset;
+}
+
+export interface TwoColumnBlockProps {
+  leftTitle: string;
+  leftDescription: Document;
+  rightImage: ContentfulAsset;
+}
+
+export interface BlockRendererProps {
+  blocks?: Block[] | null;
 }
