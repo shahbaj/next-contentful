@@ -6,8 +6,6 @@ import MultiColumnBlock from "./blocks/MultiColumnBlock"
 import { Entry } from "contentful"
 
 function isContentType(entry: Entry, contentTypeId: string): boolean {
-  console.log("entry", entry.sys.contentType.sys.id);
-  console.log("contentTypeId", contentTypeId);
   return entry.sys.contentType.sys.id === contentTypeId
 }
 
