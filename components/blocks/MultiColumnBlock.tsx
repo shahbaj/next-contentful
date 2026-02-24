@@ -1,10 +1,11 @@
-import { MultiColumnBlockProps } from "@/types/types";
+import { IColumnItemFields, MultiColumnBlockProps } from "@/types/types";
 import Image from "next/image";
 
 export default function MultiColumnBlock({
-  sectionTitle,
-  columns,
+  fields
 }: MultiColumnBlockProps) {
+  const { sectionTitle, columns } = fields;
+
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto">
@@ -14,9 +15,17 @@ export default function MultiColumnBlock({
 
         <div className="grid md:grid-cols-3 gap-8">
           {columns?.map((col) => {
-            const iconUrl = col.fields.icon?.fields?.file?.url
-              ? `https:${col.fields.icon.fields.file.url}`
-              : null;
+            // @ts-expect-error -   need to fix this type issue with the icon field
+            const { title, description, icon }: IColumnItemFields = col.fields;
+
+            let iconUrl: string | null = null;
+
+            if (icon && "fields" in icon && icon.fields && "file" in icon.fields) {
+              const file = icon.fields.file;
+              if (file && "url" in file) {
+                iconUrl = `https:${file.url}`;
+              }
+            }
 
             return (
               <article
@@ -26,7 +35,7 @@ export default function MultiColumnBlock({
                 {iconUrl && (
                   <Image
                     src={iconUrl}
-                    alt={col.fields.title}
+                    alt={title}
                     width={60}
                     height={60}
                     className="mb-4"
@@ -34,11 +43,11 @@ export default function MultiColumnBlock({
                 )}
 
                 <h3 className="font-semibold text-lg mb-2">
-                  {col.fields.title}
+                  {title}
                 </h3>
 
                 <p className="text-gray-600">
-                  {col.fields.description}
+                  {description}
                 </p>
               </article>
             );

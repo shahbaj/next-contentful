@@ -25,7 +25,7 @@ export default function Header({ siteName, logo, navigation }: HeaderProps) {
       <nav className="space-x-4" aria-label="Main navigation">
         {navigation?.map((item) => (
           <Link key={item.sys.id} href={item.fields.link} className="hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black px-2 py-1">
-            {item.fields.label}
+            {item.fields.label.toString()}
           </Link>
         ))}
       </nav>

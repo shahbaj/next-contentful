@@ -3,10 +3,9 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import type { TwoColumnBlockProps } from "@/types/types";
 
 export default function TwoColumnBlock({
-  leftTitle,
-  leftDescription,
-  rightImage,
+  fields
 }: TwoColumnBlockProps) {
+  const { leftTitle, leftDescription, rightImage } = fields;
   const imageUrl = rightImage?.fields?.file?.url
     ? `https:${rightImage.fields.file.url}`
     : "";
