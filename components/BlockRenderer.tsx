@@ -1,36 +1,55 @@
-import HeroBlock from "./blocks/HeroBlock";
-import MultiColumnBlock from "./blocks/MultiColumnBlock";
-import RichTextBlock from "./blocks/RichTextBlock";
-import TwoColumnBlock from "./blocks/TwoColumnBlock";
-import type { BlockRendererProps } from "@/types/types";
+import { BlockRendererProps, CONTENT_TYPE, IHeroBlockFields, IMultiColumnContentFields, IRichTextBlockFields, ITwoColumnBlockFields } from "@/types/types"
+import TwoColumnBlock from "./blocks/TwoColumnBlock"
+import RichTextBlock from "./blocks/RichTextBlock"
+import HeroBlock from "./blocks/HeroBlock"
+import MultiColumnBlock from "./blocks/MultiColumnBlock"
+import { Entry } from "contentful"
 
-const componentMap: Record<string, React.ComponentType<any>> = {
-  heroBlock: HeroBlock,
-  twoColumnBlock: TwoColumnBlock,
-  richTextBlock: RichTextBlock,
-  multiColumnBlock: MultiColumnBlock,
-};
+function isContentType(entry: Entry, contentTypeId: string): boolean {
+  console.log("entry", entry.sys.contentType.sys.id);
+  console.log("contentTypeId", contentTypeId);
+  return entry.sys.contentType.sys.id === contentTypeId
+}
 
-export default function BlockRenderer({ blocks }: BlockRendererProps) {
-  if (!blocks || !Array.isArray(blocks) || blocks.length === 0) {
-    return null;
-  }
+export function BlockRenderer({ blocks }: BlockRendererProps) {
+  if (!blocks || blocks.length === 0) return null
 
   return (
-    <main>
+    <>
       {blocks.map((block) => {
-        if (!block || typeof block !== 'object' || !('sys' in block)) {
-          return null;
+        if (isContentType(block, CONTENT_TYPE.HERO_BLOCK)) {
+          return <HeroBlock key={block.sys.id} fields={block.fields as IHeroBlockFields } />
         }
 
-        const contentTypeId = (block as any)?.sys?.contentType?.sys?.id;
-        if (!contentTypeId) return null;
+        if (isContentType(block, CONTENT_TYPE.RICH_TEXT_BLOCK)) {
+          return <RichTextBlock key={block.sys.id} fields={block.fields as IRichTextBlockFields} />
+        }
 
-        const Component = componentMap[contentTypeId];
+        if (isContentType(block, CONTENT_TYPE.TWO_COLUMN_LAYOUT)) {
+          return <TwoColumnBlock key={block.sys.id} fields={block.fields as ITwoColumnBlockFields} />
+        }
 
-        if (!Component) return null;
-        return <Component key={(block as any).sys.id} {...(block as any).fields} />;
+        if (isContentType(block, CONTENT_TYPE.MULTI_COLUMN_CONTENT)) {
+          return <MultiColumnBlock key={block.sys.id} fields={block.fields as IMultiColumnContentFields} />
+        }
+
+        if (process.env.NODE_ENV === "development") {
+          return (
+            <div
+              key={block.sys.id}
+              className="mx-auto max-w-3xl px-6 py-8 text-center text-sm text-muted-foreground"
+            >
+              <p>
+                Unknown block type:{" "}
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
+                  {block.sys.contentType.sys.id ?? "undefined"}
+                </code>
+              </p>
+            </div>
+          )
+        }
+        return null
       })}
-    </main>
-  );
+    </>
+  )
 }

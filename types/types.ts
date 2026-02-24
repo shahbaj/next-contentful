@@ -1,133 +1,147 @@
-import type { Entry, EntrySkeletonType } from "contentful";
-import type { Document } from "@contentful/rich-text-types";
+import { Entry, Asset, EntrySkeletonType, ChainModifiers } from "contentful"
+import { Document } from "@contentful/rich-text-types"
 
-/**
- * Contentful Asset
- */
-export interface ContentfulAsset {
-  fields: {
-    file: {
-      url: string;
-    };
-    title?: string;
-    description?: string;
-  };
+// Content Type IDs
+export const CONTENT_TYPE = {
+  GLOBAL_SETTINGS: "globalSettings",
+  PAGE: "page",
+  HERO_BLOCK: "heroBlock",
+  RICH_TEXT_BLOCK: "richTextBlock",
+  TWO_COLUMN_LAYOUT: "twoColumnBlock",
+  MULTI_COLUMN_CONTENT: "multiColumnBlock",
+  COLUMN_ITEM: "columnItem",
+  NAVIGATION_ITEM: "navigationItem",
+} as const
+
+// Field Interfaces
+export interface IHeroBlockFields {
+  heading: string
+  subheading?: string
+  backgroundImage?: Asset
+  ctaText?: string
+  ctaLink?: string
 }
 
-/**
- * Navigation Item
- */
-export interface NavigationItemSkeleton extends EntrySkeletonType {
-  contentTypeId: "navigationItem";
-  fields: {
-    label: string;
-    link: string;
-  };
+export interface IRichTextBlockFields {
+  content: Document
 }
 
-/**
- * Global Settings
- */
-export interface GlobalSettingsSkeleton extends EntrySkeletonType {
-  contentTypeId: "globalSettings";
-  fields: {
-    siteName: string;
-    logo?: ContentfulAsset;
-    navigation: Entry<NavigationItemSkeleton>[];
-    footerText: string;
-  };
+export interface ITwoColumnBlockFields {
+  leftTitle: string
+  leftDescription: Document
+  rightImage?: Asset
 }
 
-/**
- * Page
- */
-export interface Block {
-  sys: {
-    id: string;
-    contentType: {
-      sys: {
-        id: string;
-      };
-    };
-  };
-  fields: Record<string, unknown>;
+export interface IColumnItemFields {
+  title: string
+  description: string
+  icon?: Asset
 }
 
-export interface PageSkeleton extends EntrySkeletonType {
-  contentTypeId: "page";
-  fields: {
-    title: string;
-    slug: string;
-    seoTitle?: string;
-    seoDescription?: string;
-    blocks: Block[];
-  };
+export interface IMultiColumnContentFields {
+  sectionTitle: string
+  columns?: Entry<IColumnItemSkeleton>[]
 }
 
-export interface PageProps {
+export interface INavigationItemFields {
+  label: string
+  link: string
+}
+
+export interface IPageFields {
+  title: string
+  slug: string
+  blocks?: ContentBlockEntry[]
+}
+
+export interface ISiteSettingsFields {
+  siteName: string
+  logo?: Asset
+  navigation?: Entry<INavigationItemSkeleton>[]
+  footerText?: Document
+}
+
+// Skeleton Types
+export type IHeroBlockSkeleton = EntrySkeletonType<
+  IHeroBlockFields,
+  typeof CONTENT_TYPE.HERO_BLOCK
+>
+
+export type IRichTextBlockSkeleton = EntrySkeletonType<
+  IRichTextBlockFields,
+  typeof CONTENT_TYPE.RICH_TEXT_BLOCK
+>
+
+export type ITwoColumnBlockSkeleton = EntrySkeletonType<
+  ITwoColumnBlockFields,
+  typeof CONTENT_TYPE.TWO_COLUMN_LAYOUT
+>
+
+export type IColumnItemSkeleton = EntrySkeletonType<
+  IColumnItemFields,
+  typeof CONTENT_TYPE.COLUMN_ITEM
+>
+
+export type IMultiColumnContentSkeleton = EntrySkeletonType<
+  IMultiColumnContentFields,
+  typeof CONTENT_TYPE.MULTI_COLUMN_CONTENT
+>
+
+export type INavigationItemSkeleton = EntrySkeletonType<
+  INavigationItemFields,
+  typeof CONTENT_TYPE.NAVIGATION_ITEM
+>
+
+export type IPageSkeleton = EntrySkeletonType<
+  IPageFields,
+  typeof CONTENT_TYPE.PAGE
+>
+
+export type ISiteSettingsSkeleton = EntrySkeletonType<
+  ISiteSettingsFields,
+  typeof CONTENT_TYPE.GLOBAL_SETTINGS
+>
+
+// Union Types
+export type ContentBlockEntry =
+  | Entry<IHeroBlockSkeleton>
+  | Entry<IRichTextBlockSkeleton>
+  | Entry<ITwoColumnBlockSkeleton>
+  | Entry<IMultiColumnContentSkeleton>
+
+// Component Props
+export type HeroBlockProps = {
+  fields: IHeroBlockFields
+}
+
+export type RichTextBlockProps = {
+  fields: IRichTextBlockFields
+}
+
+export type TwoColumnBlockProps = {
+  fields: ITwoColumnBlockFields
+}
+
+export type MultiColumnBlockProps = {
+  fields: IMultiColumnContentFields
+}
+
+export type BlockRendererProps = {
+  blocks?: ContentBlockEntry[]
+}
+
+export type HeaderProps = {
+  siteName: string
+  logo?: Asset
+  navigation?: Entry<INavigationItemSkeleton>[]
+}
+
+export type PageProps = {
   params: Promise<{
-    slug: string;
-  }>;
+    slug: string
+  }>
 }
 
-export interface PageFields {
-  title: string;
-  slug: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  blocks: Block[];
-}
-
-export interface NavigationItem {
-  sys: { id: string };
-  fields: {
-    label: string;
-    link: string;
-  };
-}
-
-export interface HeaderProps {
-  siteName: string;
-  logo?: ContentfulAsset;
-  navigation: NavigationItem[];
-}
-
-export interface FooterProps {
-  footerText: Document;
-}
-
-export interface RichTextBlockProps {
-  content: Document;
-}
-
-export interface ColumnItem {
-  sys: { id: string };
-  fields: {
-    title: string;
-    description: string;
-    icon?: ContentfulAsset;
-  };
-}
-
-export interface MultiColumnBlockProps {
-  sectionTitle: string;
-  columns: ColumnItem[];
-}
-
-export interface HeroBlockProps {
-  heading?: string;
-  subheading?: string;
-  ctaText?: string;
-  ctaLink?: string;
-  backgroundImage?: ContentfulAsset;
-}
-
-export interface TwoColumnBlockProps {
-  leftTitle: string;
-  leftDescription: Document;
-  rightImage: ContentfulAsset;
-}
-
-export interface BlockRendererProps {
-  blocks?: Block[] | null;
+export type FooterProps = {
+  footerText?: Document
 }

@@ -1,19 +1,14 @@
 import { HeroBlockProps } from "@/types/types";
 import Image from "next/image";
 
-export default function HeroBlock({
-  heading,
-  subheading,
-  ctaText,
-  ctaLink,
-  backgroundImage,
-}: HeroBlockProps) {
-  const imageUrl = backgroundImage?.fields?.file?.url
+export default function HeroBlock({ fields }: HeroBlockProps) {
+  const { heading, subheading, backgroundImage, ctaText, ctaLink } = fields;
+
+  const imageUrl = backgroundImage && backgroundImage.fields?.file?.url
     ? `https:${backgroundImage.fields.file.url}`
     : null;
 
-  const imageAlt =
-    backgroundImage?.fields?.description || heading || "Hero background";
+  const imageAlt = (typeof backgroundImage?.fields?.description === 'string' ? backgroundImage.fields.description : null) || heading || "Hero background";
 
   return (
     <section className="relative py-24 text-center overflow-hidden" aria-label="Hero section">
@@ -38,11 +33,11 @@ export default function HeroBlock({
         {ctaText && ctaLink && (
           <a
             href={ctaLink}
-            className="mt-6 inline-block bg-white text-black px-6 py-2 font-medium rounded hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+            className="mt-6 inline-block bg-white text-black px-6 py-2 font-medium rounded hover:bg-gray-100 transition-colors"
           >
             {ctaText}
           </a>
-        )}      
+        )}
       </div>
     </section>
   );

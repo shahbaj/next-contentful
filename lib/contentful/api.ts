@@ -1,10 +1,8 @@
 import { draftMode } from "next/headers";
 import {
-  GlobalSettingsSkeleton,
-  PageSkeleton,
+  CONTENT_TYPE, type ISiteSettingsSkeleton, type IPageSkeleton
 } from "@/types/types";
 import { getClient } from "./client";
-import type { Entry } from "contentful";
 
 async function getContentfulClient() {
   const isPreview = await draftMode();
@@ -13,8 +11,8 @@ async function getContentfulClient() {
 
 export async function getGlobalSettings() {
   const client = await getContentfulClient();
-  const response = await client.getEntries<GlobalSettingsSkeleton>({
-    content_type: "globalSettings",
+  const response = await client.getEntries<ISiteSettingsSkeleton>({
+    content_type: CONTENT_TYPE.GLOBAL_SETTINGS,
     include: 2,
   });
 
@@ -25,12 +23,20 @@ export async function getGlobalSettings() {
   return response.items[0];
 }
 
-export async function getPageBySlug(slug: string): Promise<Entry<PageSkeleton> | undefined> {
+export async function getPageBySlug(slug: string) {
   const client = await getContentfulClient();
-  const response = await client.getEntries<PageSkeleton>({
-    content_type: "page",
-    "fields.slug": slug,
-    include: 10,
-  });
-  return response.items[0];
+
+  try {
+    const entries = await client.getEntries<IPageSkeleton>({
+      content_type: CONTENT_TYPE.PAGE,
+      // @ts-expect-error - need to fix this type issue with the slug field
+      "fields.slug": slug,
+      include: 10,
+      limit: 1,
+    })
+
+    return entries.items[0] ?? null;
+  } catch {
+    return null
+  }
 }
